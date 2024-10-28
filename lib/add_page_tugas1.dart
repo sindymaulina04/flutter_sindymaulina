@@ -12,12 +12,12 @@ class AddPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Penjualan'),
-        backgroundColor: Colors.green[700], // Mengubah warna AppBar
+        backgroundColor: Colors.green[700],
       ),
       body: Container(
-        color: Colors.green[50], // Warna latar belakang
+        color: Colors.green[50],
         padding: EdgeInsets.all(16.0),
-        child: SingleChildScrollView( // Memungkinkan scrolling jika konten terlalu banyak
+        child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
               _buildTextField(_fakturController, 'No Faktur', Icons.article),
@@ -32,7 +32,7 @@ class AddPage extends StatelessWidget {
               SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[700], // Warna tombol
+                  backgroundColor: Colors.green[700],
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -43,13 +43,44 @@ class AddPage extends StatelessWidget {
                   style: TextStyle(fontSize: 16),
                 ),
                 onPressed: () {
-                  // Logika untuk menyimpan data penjualan
+                  // Ambil data dari text fields
+                  String noFaktur = _fakturController.text;
+                  String tanggal = _tanggalController.text;
+                  String customer = _customerController.text;
+                  String jumlah = _jumlahController.text;
+                  String total = _totalController.text;
+
+                  // Kembali ke DashboardPage dengan data yang sudah diisi
+                  if (noFaktur.isNotEmpty && tanggal.isNotEmpty && customer.isNotEmpty && jumlah.isNotEmpty && total.isNotEmpty) {
+                    Navigator.pop(context, {
+                      'noFaktur': noFaktur,
+                      'tanggal': tanggal,
+                      'customer': customer,
+                      'jumlah': jumlah,
+                      'total': total,
+                    });
+                  } else {
+                    // Tampilkan pesan kesalahan jika ada field yang kosong
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Error'),
+                        content: Text('Semua field harus diisi!'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text('Tutup'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                 },
               ),
               SizedBox(height: 10),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[600], // Warna tombol kembali
+                  backgroundColor: Colors.grey[600],
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),

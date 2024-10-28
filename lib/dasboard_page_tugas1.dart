@@ -1,151 +1,150 @@
 import 'package:flutter/material.dart';
+import 'add_page_tugas1.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
+  @override
+  _DashboardPageState createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  List<Map<String, String>> salesData = [
+    {
+      'noFaktur': 'F001',
+      'tanggal': '2023-10-21',
+      'customer': 'John Doe',
+      'jumlah': '5',
+      'total': 'Rp 500.000',
+    },
+    {
+      'noFaktur': 'F002',
+      'tanggal': '2023-10-22',
+      'customer': 'Jane Smith',
+      'jumlah': '3',
+      'total': 'Rp 300.000',
+    },
+    {
+      'noFaktur': 'F003',
+      'tanggal': '2023-10-23',
+      'customer': 'Bob Lee',
+      'jumlah': '2',
+      'total': 'Rp 200.000',
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Dashboard'),
-        backgroundColor: Colors.green[700], // Mengubah warna AppBar
+        backgroundColor: Colors.green[700],
       ),
       body: Container(
-        padding: EdgeInsets.all(16.0), // Menambahkan padding di sekitar DataTable
-        color: Colors.green[50], // Mengganti warna latar belakang
-        child: SingleChildScrollView( // Memungkinkan scroll jika data terlalu banyak
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Daftar Penjualan',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        padding: EdgeInsets.all(16.0),
+        color: Colors.green[50],
+        child: ListView(
+          children: [
+            Text(
+              'Daftar Penjualan',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            for (var sale in salesData)
+              buildSalesCard(
+                sale['noFaktur']!,
+                sale['tanggal']!,
+                sale['customer']!,
+                sale['jumlah']!,
+                sale['total']!,
               ),
-              SizedBox(height: 16), // Jarak antara judul dan tabel
-              DataTable(
-                columns: [
-                  DataColumn(
-                    label: Container(
-                      padding: EdgeInsets.all(8.0),
-                      color: Colors.green[300], // Warna latar belakang header
-                      child: Text('No Faktur', style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Container(
-                      padding: EdgeInsets.all(8.0),
-                      color: Colors.green[300], // Warna latar belakang header
-                      child: Text('Tanggal Penjualan', style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Container(
-                      padding: EdgeInsets.all(8.0),
-                      color: Colors.green[300], // Warna latar belakang header
-                      child: Text('Nama Customer', style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Container(
-                      padding: EdgeInsets.all(8.0),
-                      color: Colors.green[300], // Warna latar belakang header
-                      child: Text('Jumlah Barang', style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Container(
-                      padding: EdgeInsets.all(8.0),
-                      color: Colors.green[300], // Warna latar belakang header
-                      child: Text('Total Penjualan', style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Container(
-                      padding: EdgeInsets.all(8.0),
-                      color: Colors.green[300], // Warna latar belakang header
-                      child: Text('Aksi', style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                ],
-                rows: [
-                  DataRow(cells: [
-                    DataCell(Text('F001')),
-                    DataCell(Text('2023-10-21')),
-                    DataCell(Text('John Doe')),
-                    DataCell(Text('5')),
-                    DataCell(Text('Rp 500.000')),
-                    DataCell(
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.edit, color: Colors.blue),
-                            onPressed: () {
-                              // Logika untuk mengedit
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              // Logika untuk menghapus
-                            },
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          // Navigasi ke AddPage dan tunggu data baru
+          final newSale = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddPage()),
+          );
+          // Tambah data baru ke daftar penjualan jika ada
+          if (newSale != null) {
+            setState(() {
+              salesData.add(newSale);
+            });
+          }
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.green[700],
+      ),
+    );
+  }
+
+  Widget buildSalesCard(String noFaktur, String tanggal, String customer, String jumlah, String total) {
+    return Card(
+      elevation: 3,
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('No Faktur: $noFaktur', style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(height: 8),
+            Text('Tanggal Penjualan: $tanggal'),
+            Text('Nama Customer: $customer'),
+            Text('Jumlah Barang: $jumlah'),
+            Text('Total Penjualan: $total'),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Detail Penjualan'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('No Faktur: $noFaktur'),
+                            Text('Tanggal Penjualan: $tanggal'),
+                            Text('Nama Customer: $customer'),
+                            Text('Jumlah Barang: $jumlah'),
+                            Text('Total Penjualan: $total'),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text('Tutup'),
                           ),
                         ],
                       ),
+                    );
+                  },
+                  child: Text('Detail', style: TextStyle(color: Colors.green[700])),
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.edit, color: Colors.blue),
+                      onPressed: () {
+                        // Logika untuk mengedit
+                      },
                     ),
-                  ]),
-                  DataRow(cells: [
-                    DataCell(Text('F002')),
-                    DataCell(Text('2023-10-22')),
-                    DataCell(Text('Jane Smith')),
-                    DataCell(Text('3')),
-                    DataCell(Text('Rp 300.000')),
-                    DataCell(
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.edit, color: Colors.blue),
-                            onPressed: () {
-                              // Logika untuk mengedit
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              // Logika untuk menghapus
-                            },
-                          ),
-                        ],
-                      ),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        // Logika untuk menghapus
+                      },
                     ),
-                  ]),
-                  DataRow(cells: [
-                    DataCell(Text('F003')),
-                    DataCell(Text('2023-10-23')),
-                    DataCell(Text('Bob Lee')),
-                    DataCell(Text('2')),
-                    DataCell(Text('Rp 200.000')),
-                    DataCell(
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.edit, color: Colors.blue),
-                            onPressed: () {
-                              // Logika untuk mengedit
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              // Logika untuk menghapus
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ]),
-                  // Anda bisa menambahkan lebih banyak DataRow di sini
-                ],
-              ),
-            ],
-          ),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
